@@ -10,8 +10,8 @@ export const fakeTodo: Mischief = {
   weight: 0.5,
   cooldownMs: 120_000,
   moodWeights: { curious: 1.8, mischievous: 1.6, happy: 1, tired: 0.3 },
-  run: ({ rand }) => {
-    const set = TODO_SETS[Math.floor(rand(0, TODO_SETS.length))] ?? TODO_SETS[0]!;
+  run: ({ pickRandom }) => {
+    const set = pickRandom(TODO_SETS);
     playSound('typing');
 
     const payload: Record<string, string> = { title: set.title };

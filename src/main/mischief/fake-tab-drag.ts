@@ -1,4 +1,5 @@
 import { FAKE_TABS } from '@shared/data/fake-tabs';
+import { SPRITE_SIZE } from '@shared/sprite';
 import { playSound } from '../audio';
 import { openPopup } from '../popup-window';
 import type { Mischief } from './index';
@@ -10,8 +11,8 @@ export const fakeTabDrag: Mischief = {
   weight: 0.5,
   cooldownMs: 120_000,
   moodWeights: { mischievous: 2, curious: 1.5, tired: 0.3 },
-  run: ({ rand, screen, sendToCharacter }) => {
-    const tab = FAKE_TABS[Math.floor(rand(0, FAKE_TABS.length))] ?? FAKE_TABS[0]!;
+  run: ({ rand, pickRandom, screen, sendToCharacter }) => {
+    const tab = pickRandom(FAKE_TABS);
 
     const width = 360;
     const height = 220;
@@ -20,7 +21,6 @@ export const fakeTabDrag: Mischief = {
 
     // Step 1: Claude walks up to the tab bar area (top ~80 px), centered
     // around where the fake tab will land — feels like he "tore it off".
-    const SPRITE_SIZE = 64;
     const walkX = Math.max(0, Math.min(screen.width - SPRITE_SIZE, x + width / 2 - SPRITE_SIZE / 2));
     const walkY = Math.max(0, Math.min(80, y - SPRITE_SIZE - 8));
     sendToCharacter({

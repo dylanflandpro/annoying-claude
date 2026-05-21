@@ -1,6 +1,7 @@
 import { Menu, Tray, app, nativeImage } from 'electron';
 import { join } from 'node:path';
 import { MOOD_LABEL, type Mood } from '@shared/mood';
+import { INTENSITY_ORDER } from '@shared/intensity';
 import type { Intensity } from '@shared/types';
 
 export interface TrayHandlers {
@@ -54,7 +55,7 @@ export function rebuild(handlers: TrayHandlers): void {
   const intensity = handlers.getIntensity();
   const paused = handlers.isPaused();
 
-  const intensityItems = (['chill', 'normal', 'chaos'] as const).map((value) => ({
+  const intensityItems = INTENSITY_ORDER.map((value) => ({
     label: value.charAt(0).toUpperCase() + value.slice(1),
     type: 'radio' as const,
     checked: intensity === value,

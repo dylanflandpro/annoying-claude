@@ -8,6 +8,7 @@ async function boot(): Promise<void> {
   const canvas = document.getElementById('stage') as HTMLCanvasElement;
   const g = canvas.getContext('2d');
   if (!g) throw new Error('No 2D context');
+  g.imageSmoothingEnabled = false;
 
   const boot = await window.claudeAPI.getBootInfo();
   resizeCanvas(canvas, boot.screen);
@@ -91,7 +92,7 @@ async function boot(): Promise<void> {
 
   window.addEventListener('mousemove', (e) => {
     updateClickThrough(e.clientX, e.clientY);
-    character.updateCursor(e.clientX, e.clientY);
+    if (character.isBattling()) character.updateCursor(e.clientX, e.clientY);
   });
 
   window.addEventListener('mousedown', (e) => {
@@ -109,7 +110,6 @@ async function boot(): Promise<void> {
     last = now;
 
     g.clearRect(0, 0, canvas.width, canvas.height);
-    g.imageSmoothingEnabled = false;
     character.update(dt);
     if (opponent && opponent.isAlive()) {
       const claudeBb = character.getBoundingBox();
@@ -132,11 +132,6 @@ async function boot(): Promise<void> {
       canvasH: window.innerHeight,
     });
 
-    // Re-evaluate click-through each frame so the bbox stays correct as
-    // Claude moves (cursor may now be inside/outside without a mousemove).
-    // We can't read the cursor here, so we lean on mousemove + a lazy resync
-    // when the character moves significantly. Cheap and good enough.
-
     requestAnimationFrame(loop);
   };
   requestAnimationFrame(loop);
@@ -155,8 +150,12 @@ function resizeCanvas(canvas: HTMLCanvasElement, size: { width: number; height: 
   canvas.height = size.height * dpr;
   canvas.style.width = `${size.width}px`;
   canvas.style.height = `${size.height}px`;
+  // Changing canvas.width resets all 2D state to defaults — re-apply ours.
   const g = canvas.getContext('2d');
-  g?.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (g) {
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.imageSmoothingEnabled = false;
+  }
 }
 
 void boot();

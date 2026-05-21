@@ -89,11 +89,8 @@ function renderDroppedFile(): void {
     params.get('snippet') ??
     'function foo() {\n  return 42;\n}';
   // Lightly syntax-color the snippet — keywords + strings only.
-  const colored = snippet
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/("[^"]*")/g, '<span class="str">$1</span>')
+  const colored = escapeHtml(snippet)
+    .replace(/(&quot;[^&]*&quot;)/g, '<span class="str">$1</span>')
     .replace(
       /\b(function|const|let|var|return|if|else|for|while|import|export|from|class|new|await|async)\b/g,
       '<span class="kw">$1</span>',

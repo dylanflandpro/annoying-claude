@@ -19,8 +19,8 @@ export const fakeClaudeMd: Mischief = {
   weight: 0.6,
   cooldownMs: 90_000,
   moodWeights: { mischievous: 1.8, bored: 1.3, tired: 0.3 },
-  run: ({ rand, screen }) => {
-    const label = NAMES[Math.floor(rand(0, NAMES.length))] ?? NAMES[0]!;
+  run: ({ rand, pickRandom, screen }) => {
+    const label = pickRandom(NAMES);
     playSound('pop');
 
     const width = 80;

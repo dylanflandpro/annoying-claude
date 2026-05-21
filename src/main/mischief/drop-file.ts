@@ -10,8 +10,8 @@ export const dropFile: Mischief = {
   weight: 0.7,
   cooldownMs: 80_000,
   moodWeights: { mischievous: 2, bored: 1.3, happy: 1, tired: 0.3 },
-  run: ({ rand, screen }) => {
-    const snip = SNIPPETS[Math.floor(rand(0, SNIPPETS.length))] ?? SNIPPETS[0]!;
+  run: ({ rand, pickRandom, screen }) => {
+    const snip = pickRandom(SNIPPETS);
     playSound('pop');
 
     const width = 180;

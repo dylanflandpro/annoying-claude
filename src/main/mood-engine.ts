@@ -49,6 +49,17 @@ export class MoodEngine {
     const prev = this.current;
     this.current = next;
     this.deps.onChange?.(next, prev);
+    // Idle-check has no work to do once we're already bored/tired; resume it
+    // when we leave those states.
+    const isLowEnergy = next === 'bored' || next === 'tired';
+    const wasLowEnergy = prev === 'bored' || prev === 'tired';
+    if (isLowEnergy && this.idleCheckTimer) {
+      clearInterval(this.idleCheckTimer);
+      this.idleCheckTimer = null;
+    } else if (!isLowEnergy && wasLowEnergy && !this.idleCheckTimer) {
+      this.lastMischiefAt = Date.now();
+      this.scheduleIdleCheck();
+    }
   }
 
   /** Called by the scheduler each time a mischief fires. */

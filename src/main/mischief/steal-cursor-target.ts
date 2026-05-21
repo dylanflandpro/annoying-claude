@@ -1,8 +1,8 @@
 import { screen } from 'electron';
+import { SPRITE_SIZE } from '@shared/sprite';
 import { playSound } from '../audio';
 import type { Mischief } from './index';
 
-const SPRITE_SIZE = 64;
 const RUN_DURATION_MS = 1100;
 const CARRY_WAYPOINTS = 3;
 const WAYPOINT_DURATION_MS = 1700;
@@ -38,9 +38,7 @@ export const stealCursorTarget: Mischief = {
       sendToCharacter({ type: 'setState', state: 'dragging' });
       playSound('beep');
 
-      let delay = 0;
       for (let i = 0; i < CARRY_WAYPOINTS; i++) {
-        delay += WAYPOINT_DURATION_MS;
         setTimeout(() => {
           const x = Math.floor(rand(0, workArea.width - SPRITE_SIZE));
           const y = Math.floor(rand(0, workArea.height - SPRITE_SIZE));
@@ -50,7 +48,7 @@ export const stealCursorTarget: Mischief = {
             y,
             durationMs: WAYPOINT_DURATION_MS - 100,
           });
-        }, delay - WAYPOINT_DURATION_MS);
+        }, i * WAYPOINT_DURATION_MS);
       }
 
       // Drop the item — Claude returns to idle wherever he ended up.
@@ -58,7 +56,7 @@ export const stealCursorTarget: Mischief = {
         sendToCharacter({ type: 'setState', state: 'surprise' });
         playSound('pop');
         setTimeout(() => sendToCharacter({ type: 'setState', state: 'idle' }), 500);
-      }, delay);
+      }, CARRY_WAYPOINTS * WAYPOINT_DURATION_MS);
     }, RUN_DURATION_MS + 100);
   },
 };

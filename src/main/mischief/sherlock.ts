@@ -1,10 +1,9 @@
 import { SHERLOCK_LINES } from '@shared/data/sherlock-lines';
-import { IpcChannels, type DialogueShowPayload } from '@shared/types';
+import { SPRITE_SIZE } from '@shared/sprite';
 import { isBrowserActive } from '../active-window';
 import { playSound } from '../audio';
 import type { Mischief } from './index';
 
-const SPRITE_SIZE = 64;
 const WATCH_DURATION_MS = 7_000;
 
 export const sherlock: Mischief = {
@@ -14,7 +13,7 @@ export const sherlock: Mischief = {
   weight: 0.5,
   cooldownMs: 110_000,
   moodWeights: { curious: 3, bored: 1.6, happy: 0.6, tired: 0, angry: 0.3 },
-  run: async ({ sendToCharacter, screen, rand, claudeWindow }) => {
+  run: async ({ sendToCharacter, screen, rand, pickRandom, showDialogue }) => {
     // Only show up when a browser is in focus. Skip silently otherwise.
     const browserActive = await isBrowserActive();
     if (!browserActive) return;
@@ -40,13 +39,7 @@ export const sherlock: Mischief = {
 
     // Step 3: peek line via dialogue.
     setTimeout(() => {
-      const line = SHERLOCK_LINES[Math.floor(rand(0, SHERLOCK_LINES.length))] ?? SHERLOCK_LINES[0]!;
-      const payload: DialogueShowPayload = {
-        text: line,
-        kind: 'think',
-        holdMs: 3_200,
-      };
-      claudeWindow.webContents.send(IpcChannels.DialogueShow, payload);
+      showDialogue(pickRandom(SHERLOCK_LINES), { kind: 'think', holdMs: 3_200 });
     }, 1900);
 
     // Step 4: hold the pose for a few seconds, then drop the costume.

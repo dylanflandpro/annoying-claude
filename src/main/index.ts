@@ -100,6 +100,7 @@ function startClaude(): void {
     isPaused: () => scheduler?.isPaused() ?? false,
     togglePause: () => scheduler?.togglePause(),
     setIntensity: (v: Intensity) => {
+      if (v === intensity) return;
       intensity = v;
       scheduler?.setIntensity(v);
       saveConfig({ intensity: v });

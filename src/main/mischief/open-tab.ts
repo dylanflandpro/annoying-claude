@@ -1,6 +1,6 @@
 import { shell } from 'electron';
 import { TAB_URLS } from '@shared/data/tab-urls';
-import { IpcChannels, type DialogueShowPayload } from '@shared/types';
+import { SPRITE_SIZE } from '@shared/sprite';
 import { playSound } from '../audio';
 import type { Mischief } from './index';
 
@@ -12,12 +12,11 @@ export const openTab: Mischief = {
   // Long cooldown — opening a tab is intrusive. 3 minutes minimum between runs.
   cooldownMs: 180_000,
   moodWeights: { curious: 2, mischievous: 1.5, bored: 1.3, tired: 0, angry: 0.5 },
-  run: async ({ rand, claudeWindow, screen, sendToCharacter }) => {
-    const choice = TAB_URLS[Math.floor(rand(0, TAB_URLS.length))] ?? TAB_URLS[0]!;
+  run: async ({ rand, pickRandom, screen, sendToCharacter, showDialogue }) => {
+    const choice = pickRandom(TAB_URLS);
 
     // Step 1: Claude walks down to the taskbar zone (bottom ~50 px) — bias
     // toward the center-right where browsers are usually pinned.
-    const SPRITE_SIZE = 64;
     const taskbarX = Math.floor(rand(screen.width * 0.35, screen.width * 0.7));
     const taskbarY = screen.height - SPRITE_SIZE - 4;
     sendToCharacter({
@@ -29,12 +28,7 @@ export const openTab: Mischief = {
 
     // Step 2: dialogue bubble pre-announces.
     setTimeout(() => {
-      const payload: DialogueShowPayload = {
-        text: `Opening a tab. ${choice.reason}`,
-        kind: 'speak',
-        holdMs: 3_000,
-      };
-      claudeWindow.webContents.send(IpcChannels.DialogueShow, payload);
+      showDialogue(`Opening a tab. ${choice.reason}`, { kind: 'speak', holdMs: 3_000 });
     }, 700);
 
     // Step 3: ripple at Claude's "click" spot (center of where he lands).

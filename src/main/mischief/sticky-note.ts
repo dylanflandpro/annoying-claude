@@ -10,10 +10,9 @@ export const stickyNote: Mischief = {
   weight: 0.7,
   cooldownMs: 60_000,
   moodWeights: { mischievous: 1.8, angry: 1.5, happy: 1, tired: 0.3, bored: 1.4 },
-  run: ({ rand }) => {
-    const text = STICKIES[Math.floor(rand(0, STICKIES.length))] ?? STICKIES[0]!;
-    const author =
-      STICKY_AUTHORS[Math.floor(rand(0, STICKY_AUTHORS.length))] ?? STICKY_AUTHORS[0]!;
+  run: ({ pickRandom }) => {
+    const text = pickRandom(STICKIES);
+    const author = pickRandom(STICKY_AUTHORS);
     playSound('pop');
     openPopup({
       type: 'sticky',

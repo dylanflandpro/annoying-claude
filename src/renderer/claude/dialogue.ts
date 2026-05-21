@@ -24,6 +24,8 @@ const TAIL_WIDTH = 12;
 const BORDER = 3;
 const TYPE_MS_PER_CHAR = 32;
 const FADE_MS = 280;
+const BUBBLE_WIDTH = CHARS_PER_LINE * (FONT_SIZE * 0.6) + PADDING_X * 2;
+const FONT_SPEC = `${FONT_SIZE}px "Cascadia Mono", "Consolas", monospace`;
 
 const COLOR_BG = '#1a1410';
 const COLOR_BORDER = '#f4e8dc';
@@ -136,7 +138,7 @@ export class DialogueBox {
     if (!this.active) return;
     const a = this.active;
 
-    const bubbleW = CHARS_PER_LINE * (FONT_SIZE * 0.6) + PADDING_X * 2;
+    const bubbleW = BUBBLE_WIDTH;
     const bubbleH = a.lines.length * LINE_HEIGHT + PADDING_Y * 2;
 
     // Position above Claude, centered. Clamp inside the canvas.
@@ -186,7 +188,7 @@ export class DialogueBox {
 
     // Text (revealed portion only).
     g.fillStyle = a.kind === 'think' ? COLOR_THINK : COLOR_TEXT;
-    g.font = `${FONT_SIZE}px "Cascadia Mono", "Consolas", monospace`;
+    g.font = FONT_SPEC;
     g.textBaseline = 'top';
     let remaining = a.revealed;
     for (let i = 0; i < a.lines.length; i++) {

@@ -42,7 +42,6 @@ const BROWSER_HINTS: ReadonlyArray<string> = [
   'Google Chrome',
   'Chromium',
   'Mozilla Firefox',
-  'Microsoft Edge',
   'Microsoft Edge',
   'Brave',
   'Opera',

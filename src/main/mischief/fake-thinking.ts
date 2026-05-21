@@ -1,4 +1,3 @@
-import { IpcChannels, type DialogueShowPayload } from '@shared/types';
 import { playSound } from '../audio';
 import type { Mischief } from './index';
 
@@ -21,10 +20,8 @@ export const fakeThinking: Mischief = {
   weight: 1,
   cooldownMs: 35_000,
   moodWeights: { curious: 2, happy: 1, angry: 0.4, tired: 0.5 },
-  run: ({ rand, claudeWindow }) => {
-    const text = PROMPTS[Math.floor(rand(0, PROMPTS.length))] ?? PROMPTS[0]!;
+  run: ({ pickRandom, showDialogue }) => {
     playSound('thinking');
-    const payload: DialogueShowPayload = { text, kind: 'think', holdMs: 2_400 };
-    claudeWindow.webContents.send(IpcChannels.DialogueShow, payload);
+    showDialogue(pickRandom(PROMPTS), { kind: 'think', holdMs: 2_400 });
   },
 };
